@@ -26,4 +26,5 @@ Thumbs.db
 *.db
 *.sql
 *.sql.gz
+!database/seeders/initial_database.sql.gz
 /.g1a-work/
