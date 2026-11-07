@@ -1,0 +1,199 @@
+:root {
+    --samaki-primary: #2f6b52;
+    --samaki-primary-rgb: 47, 107, 82;
+    --samaki-accent: #c78b22;
+    --samaki-accent-rgb: 199, 139, 34;
+    --samaki-header-end: #1b4332;
+    --samaki-surface: #ffffff;
+    --samaki-surface-soft: #f4f8f5;
+    --samaki-border: #d5e4da;
+    --samaki-text: #172033;
+    --samaki-muted: #68758a;
+    --samaki-shadow: 0 0.55rem 1.5rem rgba(20, 43, 77, 0.08);
+}
+
+/* 1. Hijau Pemerintahan Sinjai (Default) */
+html[data-samaki-color-theme="government-green"] {
+    --samaki-primary: #2f6b52;
+    --samaki-primary-rgb: 47, 107, 82;
+    --samaki-accent: #c78b22;
+    --samaki-accent-rgb: 199, 139, 34;
+    --samaki-header-end: #1b4332;
+    --samaki-surface-soft: #f4f8f5;
+    --samaki-border: #d5e4da;
+}
+
+/* 2. Maritim Sinjai (Pesisir & Bahari) */
+html[data-samaki-color-theme="maritime-sinjai"] {
+    --samaki-primary: #18778a;
+    --samaki-primary-rgb: 24, 119, 138;
+    --samaki-accent: #2aa596;
+    --samaki-accent-rgb: 42, 165, 150;
+    --samaki-header-end: #124d5b;
+    --samaki-surface-soft: #f2f8f9;
+    --samaki-border: #d2e7e9;
+}
+
+/* 3. Biru SAMAKI (Modern & Tegas) */
+html[data-samaki-color-theme="blue-samaki"] {
+    --samaki-primary: #1769e0;
+    --samaki-primary-rgb: 23, 105, 224;
+    --samaki-accent: #0f9f91;
+    --samaki-accent-rgb: 15, 159, 145;
+    --samaki-header-end: #0b4ca6;
+    --samaki-surface-soft: #f5f8fc;
+    --samaki-border: #dde5ef;
+}
+
+/* 4. Pastel Sinjai (Sage & Lavender Lembut) */
+html[data-samaki-color-theme="pastel-sinjai"] {
+    --samaki-primary: #417a63;
+    --samaki-primary-rgb: 65, 122, 99;
+    --samaki-accent: #557ca8;
+    --samaki-accent-rgb: 85, 124, 168;
+    --samaki-header-end: #2d5343;
+    --samaki-surface-soft: #f4f7fb;
+    --samaki-border: #d8e5dd;
+}
+
+/* SAMAKI Dashboard Hero Banner */
+.samaki-dashboard-hero {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+        linear-gradient(90deg, rgba(3, 18, 34, 0.96) 0%, rgba(5, 31, 54, 0.85) 45%, rgba(4, 20, 38, 0.92) 100%),
+        #071525;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.samaki-dashboard-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(135deg, rgba(var(--samaki-accent-rgb), 0.22) 0 1px, transparent 1px 120px),
+        linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 150px);
+    opacity: 0.6;
+}
+
+.samaki-dashboard-hero::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 3.5px;
+    background: linear-gradient(90deg, var(--samaki-accent), var(--samaki-primary) 50%, var(--samaki-header-end));
+}
+
+.samaki-hero-copy {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 10px;
+    background: rgba(4, 15, 29, 0.45);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+}
+
+/* Integration Ribbon Style */
+.samaki-ribbon {
+    background: linear-gradient(90deg, var(--samaki-primary), var(--samaki-header-end));
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Dynamic theme elements */
+.theme-nav-active {
+    background-color: var(--samaki-primary) !important;
+}
+
+.theme-accent-text {
+    color: var(--samaki-accent) !important;
+}
+
+.theme-primary-bg {
+    background-color: var(--samaki-primary) !important;
+}
+
+/* SAMAKI Sidebar Navigation Styling */
+.samaki-sidebar {
+    background: linear-gradient(180deg, var(--samaki-header-end) 0%, #061320 60%, #030a12 100%);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.25);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.samaki-nav-heading {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.45);
+    padding: 0.75rem 1rem 0.35rem;
+}
+
+.samaki-nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.55rem 0.85rem;
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75);
+    transition: all 0.2s ease;
+}
+
+.samaki-nav-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.09);
+    transform: translateX(2px);
+}
+
+.samaki-nav-link.active {
+    color: #ffffff;
+    font-weight: 700;
+    background: linear-gradient(90deg, rgba(var(--samaki-primary-rgb), 0.5) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border-left: 3.5px solid var(--samaki-accent);
+}
+
+.samaki-subnav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.42rem 0.75rem 0.42rem 2.2rem;
+    border-radius: 0.4rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.65);
+    transition: all 0.15s ease;
+}
+
+.samaki-subnav-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.samaki-subnav-link.active {
+    color: var(--samaki-accent);
+    font-weight: 700;
+    background: rgba(var(--samaki-accent-rgb), 0.12);
+}
+
+/* Custom subtle scrollbar for fixed sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}

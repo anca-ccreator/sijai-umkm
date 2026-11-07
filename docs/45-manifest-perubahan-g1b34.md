@@ -1,0 +1,22 @@
+# Manifest perubahan G1-B3.4
+
+Tanggal: 7 November 2026. Arsip penyerahan hanya memuat file baru/berubah pada daftar berikut; `.env`, cache, `vendor`, `node_modules`, build, basis data dan arsip lama tidak ikut.
+
+| File | SHA-256 |
+| --- | --- |
+| AGENTS.md | 7691E6B3D5F87A745F7A846D71475552D4B45ED9E9452517DDD13F14C9B11DCA |
+| app/Http/Controllers/FieldVerificationController.php | DE33A2620A7BBC8F4CF5AB9A406325F5A9DB2E5751FD3B8C9B0E6044B374EB17 |
+| app/Modules/Governance/FieldVerificationService.php | F0E9226AA24E71AD1B911B3858AD17D86F4F16C08D31A28F5D1F1C2242F3D262 |
+| app/Modules/Governance/SessionFieldVerificationGateway.php | 091C0DE86B5B690C8870CAF29D78F171011C0AA19921038E80C7F4A0AF4D19E2 |
+| database/migrations/2026_11_07_000011_add_field_verification.php | A5BDCDEBA6EEF00A76839C1F6EDB6F97BCD8C359AFEDDF14911F3429276074B4 |
+| resources/views/field-verification/show.blade.php | EBD3528C881B168FA39ABDD614EDAE83D2ECDF7457000761D7E5CAE9E6CEFE23 |
+| routes/web.php | B28439D0F85AA7689221F43E246F65105E397B802840C087474BCA8B09E89E1C |
+| tests/MySql/MigrationAndConcurrencyTest.php | 5A33882E29F951814997961D1CFD670DEB4A99B94AC27949AD2FED49B09FA920 |
+| tests/MySql/FieldVerificationTest.php | 8B82948EDF56BE49C1C66368A07EB67E157A31B7EEBF5D805442ABE0D542B4A2 |
+| docs/20-operasi-mysql-lokal-g1b1.md | F71890E970172C95280C2B191C65FA0DC148F5403415FFFBCF9D04AAC890EE25 |
+| docs/41-kontrak-verifikasi-field-g1b34.md | 4A4D587676D93BEEE1E8968B72569A2557FE379CD0FDAE09D2E77068F583B92E |
+| docs/42-matriks-kewenangan-field-g1b34.md | D3E7E45397A6CC79F380655AE91E6935FA0A7A422F3ABF28C05C763BF395524D |
+| docs/43-panduan-verifikasi-field-g1b34.md | 5989175115FD5C3FCBEFDB4374CD65A31E69AD0F1BE0679415748092CE1500D9 |
+| docs/44-laporan-hasil-g1b34.md | 5B404A323ED903C6061A51B53ED06B8E2B26C3396A1B397AF963F110841B46BB |
+
+`docs/45-manifest-perubahan-g1b34.md` sendiri dan ZIP tidak dicantumkan dalam daftar sidik file agar manifest tidak saling mengubah. SHA-256 ZIP dilaporkan terpisah setelah arsip dibuat.
