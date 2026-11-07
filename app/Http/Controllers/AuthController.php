@@ -23,7 +23,18 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        try {
+            $authenticated = Auth::attempt($credentials, $request->boolean('remember'));
+        } catch (\Illuminate\Database\QueryException $e) {
+            if (str_contains($e->getMessage(), "doesn't exist") || str_contains($e->getMessage(), '42S02')) {
+                \Illuminate\Support\Facades\Artisan::call('sijai:init-db', ['--force' => true]);
+                $authenticated = Auth::attempt($credentials, $request->boolean('remember'));
+            } else {
+                throw $e;
+            }
+        }
+
+        if ($authenticated) {
             $request->session()->regenerate();
 
             \App\Models\ActivityLog::create([

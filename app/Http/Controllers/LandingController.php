@@ -10,7 +10,16 @@ class LandingController extends Controller
 {
     public function index()
     {
-        $totalUmkm = Umkm::count();
+        try {
+            $totalUmkm = Umkm::count();
+        } catch (\Illuminate\Database\QueryException $e) {
+            if (str_contains($e->getMessage(), "doesn't exist") || str_contains($e->getMessage(), '42S02')) {
+                \Illuminate\Support\Facades\Artisan::call('sijai:init-db', ['--force' => true]);
+                $totalUmkm = Umkm::count();
+            } else {
+                throw $e;
+            }
+        }
         $totalTenagaKerja = (int) Umkm::selectRaw("SUM(CASE WHEN jumlah_karyawan BETWEEN 1 AND 100 THEN jumlah_karyawan ELSE 1 END) as total")->value("total");
         $totalOmzet = (float) Umkm::sum('omset_tahunan');
         $totalBerizin = Umkm::where('jenis_izin', '!=', 'BELUM_BERIZIN')->count();

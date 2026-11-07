@@ -80,3 +80,47 @@ Route::middleware('auth')->group(function () {
         Route::get('/cetak-lembar-kerja', [\App\Http\Controllers\RekonsiliasiController::class, 'cetakLembarKerja'])->name('cetakLembarKerja');
     });
 });
+
+// Rute Diagnostik & Inisialisasi Otomatis Cloud (Railway)
+Route::get('/init-db', function () {
+    try {
+        @set_time_limit(300);
+        $exitCode = \Illuminate\Support\Facades\Artisan::call('sijai:init-db', ['--force' => true]);
+        $output = \Illuminate\Support\Facades\Artisan::output();
+
+        $flagFile = storage_path('framework/db_initialized.flag');
+        @touch($flagFile);
+
+        return response("<!DOCTYPE html>
+<html lang='id'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Inisialisasi Basis Data SIJAI UMKM</title>
+    <script src='https://cdn.tailwindcss.com'></script>
+</head>
+<body class='bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4'>
+    <div class='max-w-2xl w-full bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl'>
+        <div class='flex items-center gap-3 border-b border-slate-700 pb-4 mb-4'>
+            <div class='w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl'>✓</div>
+            <div>
+                <h1 class='text-xl font-bold text-white'>Inisialisasi Basis Data SIJAI UMKM Berhasil</h1>
+                <p class='text-sm text-slate-400'>Kabupaten Sinjai — Cloud Managed Deployment</p>
+            </div>
+        </div>
+        <pre class='bg-slate-950 p-4 rounded-xl text-emerald-400 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800 mb-6'>" . htmlspecialchars($output) . "</pre>
+        <div class='flex flex-wrap gap-3'>
+            <a href='/login' class='flex-1 text-center bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-xl transition shadow-lg shadow-blue-600/30'>
+                👉 Masuk ke SIJAI UMKM (/login)
+            </a>
+            <a href='/' class='bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 px-6 rounded-xl transition'>
+                Beranda Publik
+            </a>
+        </div>
+    </div>
+</body>
+</html>");
+    } catch (\Throwable $e) {
+        return response("<pre style='background:#7f1d1d;color:#fff;padding:20px;font-family:monospace;'>Gagal Inisialisasi: " . htmlspecialchars($e->getMessage()) . "\n\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>", 500);
+    }
+})->name('init-db');
