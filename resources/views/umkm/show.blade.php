@@ -278,6 +278,70 @@
         </div>
     </div>
 
+    <!-- KARTU PRODUK INDUSTRI PENGOLAHAN PANGAN (KB-09 MODEL B) -->
+    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h2 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
+                <span>🍲</span>
+                <span>Katalog Produk Industri Pengolahan Pangan (KB-09)</span>
+            </h2>
+            <a href="{{ route('pangan.index', ['q' => $umkm->nama_usaha]) }}" 
+               class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs rounded-lg border border-emerald-200 transition">
+                + Kelola di Meja Pangan
+            </a>
+        </div>
+
+        @if($umkm->foodProducts && $umkm->foodProducts->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                @foreach($umkm->foodProducts as $fp)
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="font-extrabold text-sm text-slate-900">{{ $fp->nama_produk }}</div>
+                            @if($fp->merek_produk)
+                                <div class="text-[11px] font-semibold text-emerald-700">Merek: {{ $fp->merek_produk }}</div>
+                            @endif
+                            <div class="text-[10px] text-slate-500 mt-0.5">{{ $fp->kategori_produk }} &bull; {{ $fp->satuan_produk }}</div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $fp->status_verifikasi === 'TERVERIFIKASI' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700' }}">
+                            {{ $fp->status_verifikasi }}
+                        </span>
+                    </div>
+
+                    <div class="text-[11px] text-slate-600 border-t border-slate-200/60 pt-2 space-y-1">
+                        <div>Bahan Baku: <strong class="text-slate-800">{{ $fp->bahan_baku_utama ?: '-' }}</strong> (Asal: {{ $fp->sumber_bahan_baku ?: 'Sinjai' }})</div>
+                        <div class="flex items-center justify-between">
+                            <span>Kapasitas: <strong>{{ number_format($fp->kapasitas_produksi_bulanan, 0, ',', '.') }} {{ $fp->satuan_produksi }}</strong>/bln</span>
+                            <span>Realisasi: <strong class="text-emerald-700">{{ number_format($fp->realisasi_produksi_bulanan, 0, ',', '.') }}</strong>/bln</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-200/60">
+                        @if($fp->legalitas_halal)
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Halal: {{ $fp->legalitas_halal }}</span>
+                        @endif
+                        @if($fp->legalitas_pirt)
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">P-IRT: {{ $fp->legalitas_pirt }}</span>
+                        @endif
+                        @if($fp->legalitas_bpom)
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">BPOM: {{ $fp->legalitas_bpom }}</span>
+                        @endif
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold {{ $fp->status_higiene === 'LAYAK_HIGIENE' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">
+                            {{ $fp->status_higiene === 'LAYAK_HIGIENE' ? '✨ Layak Higiene' : '⚠️ ' . $fp->status_higiene }}
+                        </span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        @else
+            <div class="p-4 bg-slate-50 border border-dashed border-slate-300 rounded-xl text-center space-y-1 text-xs text-slate-500">
+                <span class="text-2xl block">🍲</span>
+                <div class="font-bold text-slate-700">Belum Ada Catatan Spesifikasi Komoditas Pangan</div>
+                <p class="text-[11px] text-slate-400">Unit usaha ini dapat didaftarkan produk unggulannya (Kopi, Abon, Markisa, Gula Semut, dll) melalui Meja Profil Pangan.</p>
+            </div>
+        @endif
+    </div>
+
     <!-- PANEL AKSI VERIFIKASI SATU PINTU (Hanya untuk Verifikator / Admin) -->
     @if(auth()->user()?->isVerifikator())
     <div class="bg-white p-5 rounded-xl border border-emerald-300 shadow-sm space-y-4">

@@ -461,5 +461,9 @@ class DatabaseSeeder extends Seeder
                 'created_at' => now()->subDays(10),
             ]);
         }
+
+        // 5. Seed Profil Industri Pengolahan Pangan Khas Sinjai (KB-09 Model B)
+        require_once __DIR__ . '/FoodProductSeeder.php';
+        (new FoodProductSeeder())->run();
     }
 }

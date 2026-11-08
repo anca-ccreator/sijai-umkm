@@ -133,6 +133,11 @@ class Umkm extends Model
         return $this->belongsTo(User::class, 'verified_by');
     }
 
+    public function foodProducts()
+    {
+        return $this->hasMany(FoodProduct::class, 'umkm_id');
+    }
+
     public function activityLogs()
     {
         return $this->hasMany(ActivityLog::class, 'umkm_id')->latest();

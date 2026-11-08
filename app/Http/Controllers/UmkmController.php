@@ -316,7 +316,7 @@ class UmkmController extends Controller
 
     public function show($id)
     {
-        $umkm = Umkm::with(['owner', 'verifier', 'activityLogs'])->findOrFail($id);
+        $umkm = Umkm::with(['owner', 'verifier', 'activityLogs', 'foodProducts'])->findOrFail($id);
         return view('umkm.show', compact('umkm'));
     }
 

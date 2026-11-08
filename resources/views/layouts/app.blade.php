@@ -39,6 +39,7 @@
     @php
         $sidebarKonflikCount = \Illuminate\Support\Facades\Schema::hasTable('nib_records') ? \App\Models\NibRecord::where('reconciliation_status', 'CONFLICTING_INFO')->count() : 44;
         $sidebarDraftCount = \Illuminate\Support\Facades\Schema::hasTable('umkm') ? \App\Models\Umkm::where('status', 'DRAFT')->count() : 0;
+        $sidebarPanganCount = \Illuminate\Support\Facades\Schema::hasTable('food_products') ? \App\Models\FoodProduct::count() : 0;
     @endphp
 
     <!-- Mobile Backdrop Overlay -->
@@ -97,6 +98,18 @@
                                 <span class="text-base">➕</span>
                                 <span>Input UMKM Baru</span>
                             </div>
+                        </a>
+                        <a href="{{ route('pangan.index') }}" 
+                           class="samaki-nav-link {{ request()->routeIs('pangan*') ? 'active' : '' }}">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-base">🍲</span>
+                                <span>Profil Industri Pangan</span>
+                            </div>
+                            @if($sidebarPanganCount > 0)
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                                {{ $sidebarPanganCount }} Produk
+                            </span>
+                            @endif
                         </a>
                     </div>
                 </div>

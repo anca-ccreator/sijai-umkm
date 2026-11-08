@@ -87,6 +87,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/putuskan', [\App\Http\Controllers\VerifikasiController::class, 'putuskan'])->name('putuskan');
         Route::post('/putuskan-masal', [\App\Http\Controllers\VerifikasiController::class, 'putuskanMasal'])->name('putuskanMasal');
     });
+
+    // 9. Profil Industri Pengolahan Pangan (KB-09 Model B - Sektor Percontohan)
+    Route::prefix('pangan')->name('pangan.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PanganController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\PanganController::class, 'store'])->name('store');
+        Route::put('/{id}', [\App\Http\Controllers\PanganController::class, 'update'])->name('update');
+        Route::post('/{id}/verifikasi', [\App\Http\Controllers\PanganController::class, 'verifikasi'])->name('verifikasi');
+        Route::get('/ekspor', [\App\Http\Controllers\PanganController::class, 'ekspor'])->name('ekspor');
+        Route::get('/cetak-kurasi', [\App\Http\Controllers\PanganController::class, 'cetakKurasi'])->name('cetakKurasi');
+    });
 });
 
 // Rute Diagnostik & Inisialisasi Otomatis Cloud (Railway)
