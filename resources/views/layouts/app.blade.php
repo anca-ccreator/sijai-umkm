@@ -6,7 +6,7 @@
     <title>@yield('title', 'SIJAI UMKM') - Pemerintah Kabupaten Sinjai</title>
     <!-- Tailwind CSS CDN untuk kepastian tampilan instan tanpa build -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset('css/samaki-theme.css') }}">
+    <link rel="stylesheet" href="/css/samaki-theme.css">
     <script>
         tailwind.config = {
             theme: {
@@ -27,6 +27,7 @@
         }
     </script>
     <style>
+        {!! file_exists(public_path('css/samaki-theme.css')) ? file_get_contents(public_path('css/samaki-theme.css')) : '' !!}
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'DM Sans', 'Inter', sans-serif; }
     </style>

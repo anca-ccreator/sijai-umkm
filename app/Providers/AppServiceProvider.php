@@ -16,6 +16,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Paksa skema HTTPS pada lingkungan Cloud (Railway / Reverse Proxy)
+        if (request()->header('x-forwarded-proto') === 'https' || app()->environment('production') || str_contains(request()->getHttpHost(), 'railway.app')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Otomatis inisialisasi basis data jika tabel 'users' belum ada
         if (!$this->app->runningInConsole()) {
             try {

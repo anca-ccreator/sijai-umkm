@@ -9,8 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset('css/samaki-theme.css') }}">
+    <link rel="stylesheet" href="/css/samaki-theme.css">
     <style>
+        {!! file_exists(public_path('css/samaki-theme.css')) ? file_get_contents(public_path('css/samaki-theme.css')) : '' !!}
         body { font-family: 'DM Sans', 'Inter', sans-serif; }
         .hero-title { font-size: clamp(38px, 4.8vw, 64px); line-height: 1.05; letter-spacing: -0.04em; }
         .orb { position: absolute; border-radius: 50%; pointer-events: none; }
