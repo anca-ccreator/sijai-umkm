@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SIJAI UMKM') - Pemerintah Kabupaten Sinjai</title>
-    <!-- Tailwind CSS CDN untuk kepastian tampilan instan tanpa build -->
+    <!-- Fonts & Tailwind CSS CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/samaki-theme.css">
     <script>
@@ -27,12 +30,16 @@
         }
     </script>
     <style>
-        {!! file_exists(public_path('css/samaki-theme.css')) ? file_get_contents(public_path('css/samaki-theme.css')) : '' !!}
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'DM Sans', 'Inter', sans-serif; }
+        {!! file_exists(public_path('css/samaki-theme.css')) ? file_get_contents(public_path('css/samaki-theme.css')) : '' !!}
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen">
+
+    @php
+        $sidebarKonflikCount = \Illuminate\Support\Facades\Schema::hasTable('nib_records') ? \App\Models\NibRecord::where('reconciliation_status', 'CONFLICTING_INFO')->count() : 44;
+        $sidebarDraftCount = \Illuminate\Support\Facades\Schema::hasTable('umkm') ? \App\Models\Umkm::where('status', 'DRAFT')->count() : 0;
+    @endphp
 
     <!-- Mobile Backdrop Overlay -->
     <div id="sidebarBackdrop" 
@@ -42,6 +49,7 @@
 
     <!-- SIDEBAR SAMAKI: Posisi Tetap (Fixed), Fit Layar & Bebas Efek Scroll Konten -->
     <aside id="samakiSidebar" 
+           style="background: linear-gradient(180deg, var(--samaki-header-end, #1b4332) 0%, #061320 60%, #030a12 100%) !important; color: #ffffff !important;"
            class="samaki-sidebar w-64 fixed inset-y-0 left-0 h-screen z-50 flex flex-col transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0">
             
             <!-- Brand / Header Sidebar -->
@@ -97,6 +105,18 @@
                 <div>
                     <div class="samaki-nav-heading">Pembersihan & Mutu</div>
                     <div class="space-y-1">
+                        <a href="{{ route('verifikasi.index') }}" 
+                           class="samaki-nav-link {{ request()->routeIs('verifikasi*') ? 'active' : '' }}">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-base">⚖️</span>
+                                <span>Meja Verifikasi OPD</span>
+                            </div>
+                            @if($sidebarDraftCount > 0)
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                                {{ number_format($sidebarDraftCount) }} Antrean
+                            </span>
+                            @endif
+                        </a>
                         <a href="{{ route('pembersihan.index') }}" 
                            class="samaki-nav-link {{ request()->routeIs('pembersihan*') ? 'active' : '' }}">
                             <div class="flex items-center space-x-2.5">
@@ -110,12 +130,18 @@
                         <a href="{{ route('rekonsiliasi.index') }}" 
                            class="samaki-nav-link {{ request()->routeIs('rekonsiliasi*') ? 'active' : '' }}">
                             <div class="flex items-center space-x-2.5">
-                                <span class="text-base">⚖️</span>
+                                <span class="text-base">🔗</span>
                                 <span>Rekonsiliasi NIB</span>
                             </div>
-                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-400/30" title="44 Konflik Identitas Terdeteksi">
-                                44 Konflik
+                            @if($sidebarKonflikCount > 0)
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-400/30" title="{{ $sidebarKonflikCount }} Konflik Identitas Terdeteksi">
+                                {{ $sidebarKonflikCount }} Konflik
                             </span>
+                            @else
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                                Bersih
+                            </span>
+                            @endif
                         </a>
                     </div>
                 </div>

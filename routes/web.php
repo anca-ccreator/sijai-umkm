@@ -76,8 +76,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/tautkan', [\App\Http\Controllers\RekonsiliasiController::class, 'tautkan'])->name('tautkan');
         Route::post('/{id}/pisah', [\App\Http\Controllers\RekonsiliasiController::class, 'pisah'])->name('pisah');
         Route::post('/tautkan-masal', [\App\Http\Controllers\RekonsiliasiController::class, 'tautkanMasal'])->name('tautkanMasal');
+        Route::post('/{id}/selesaikan-konflik', [\App\Http\Controllers\RekonsiliasiController::class, 'selesaikanKonflik'])->name('selesaikanKonflik');
         Route::get('/ekspor-konflik', [\App\Http\Controllers\RekonsiliasiController::class, 'eksporKonflik'])->name('eksporKonflik');
         Route::get('/cetak-lembar-kerja', [\App\Http\Controllers\RekonsiliasiController::class, 'cetakLembarKerja'])->name('cetakLembarKerja');
+    });
+
+    // 8. Meja Kerja Verifikator Multi-OPD (KB-02, KB-05, KB-07, DT-007)
+    Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\VerifikasiController::class, 'index'])->name('index');
+        Route::post('/{id}/putuskan', [\App\Http\Controllers\VerifikasiController::class, 'putuskan'])->name('putuskan');
+        Route::post('/putuskan-masal', [\App\Http\Controllers\VerifikasiController::class, 'putuskanMasal'])->name('putuskanMasal');
     });
 });
 

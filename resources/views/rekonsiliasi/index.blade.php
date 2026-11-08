@@ -348,9 +348,19 @@
                             @elseif($row->reconciliation_status === 'CONFLICTING_INFO')
                                 <div class="space-y-1">
                                     <button type="button" 
-                                            onclick="alert('PENTING: NIK identik tetapi nama berbeda (DPMPTSP: {{ $row->nama_lengkap }} vs Koperasi: {{ $row->matchedUmkm?->owner?->nama_lengkap }}). Penggabungan langsung DILARANG sistem untuk mencegah pelanggaran UU PDP No. 27/2022. Silakan unduh Lembar Kerja Lapangan untuk verifikasi fisik KTP.')"
-                                            class="w-full py-1.5 px-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs shadow-sm transition">
-                                        ⚠️ Karantina
+                                            onclick="openModalResolusiKonflik({{ json_encode([
+                                                'id' => $row->id,
+                                                'nib' => $row->nib,
+                                                'nama_oss' => $row->nama_lengkap,
+                                                'nama_koperasi' => $row->matchedUmkm?->owner?->nama_lengkap ?? 'Tidak diketahui',
+                                                'usaha_oss' => $row->nama_usaha ?? '-',
+                                                'usaha_koperasi' => $row->matchedUmkm?->nama_usaha ?? '-',
+                                                'kecamatan' => $row->kecamatan,
+                                                'nik' => $row->masked_nik ?? (strlen($row->nik) >= 10 ? substr($row->nik, 0, 6) . '******' . substr($row->nik, -4) : 'NIK Terlindungi'),
+                                            ]) }})"
+                                            class="w-full py-1.5 px-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs shadow-sm transition flex items-center justify-center space-x-1">
+                                        <span>⚖️</span>
+                                        <span>Selesaikan Sengketa</span>
                                     </button>
                                     <form action="{{ route('rekonsiliasi.pisah', $row->id) }}" method="POST">
                                         @csrf
@@ -485,6 +495,119 @@
     </div>
 </div>
 
+<!-- MODAL RESOLUSI SENGKETA NIB K4 (DT-009 JALUR K4) -->
+<div id="modal-resolusi-konflik" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in duration-200">
+        <div class="flex items-start justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center space-x-2.5">
+                <span class="text-2xl">⚖️</span>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-800">Majelis Sidang Resolusi Sengketa NIB (Jalur K4)</h3>
+                    <p class="text-xs text-slate-500">Pemberian kepastian hukum atas perbedaan data NIB OSS DPMPTSP vs Data UKM Dinas Koperasi.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeModalResolusiKonflik()"
+                    class="text-slate-400 hover:text-slate-700 text-lg font-bold p-1">
+                ✕
+            </button>
+        </div>
+
+        <!-- Perbandingan Klaim Pihak (Visualisasi Konflik) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <div class="p-3 bg-white rounded-lg border border-slate-200 space-y-1">
+                <div class="text-[10px] uppercase font-bold text-blue-600 flex items-center space-x-1">
+                    <span>🏢</span> <span>Klaim 1: Data OSS DPMPTSP</span>
+                </div>
+                <div class="font-extrabold text-slate-800 text-sm" id="resolusi-nama-oss">-</div>
+                <div class="text-slate-600">Usaha: <span class="font-semibold text-slate-800" id="resolusi-usaha-oss">-</span></div>
+                <div class="text-slate-500 text-[11px]">Kecamatan: <span id="resolusi-kecamatan">-</span></div>
+            </div>
+
+            <div class="p-3 bg-white rounded-lg border border-slate-200 space-y-1">
+                <div class="text-[10px] uppercase font-bold text-emerald-600 flex items-center space-x-1">
+                    <span>🏛️</span> <span>Klaim 2: Data Dinas Koperasi</span>
+                </div>
+                <div class="font-extrabold text-slate-800 text-sm" id="resolusi-nama-koperasi">-</div>
+                <div class="text-slate-600">Usaha: <span class="font-semibold text-slate-800" id="resolusi-usaha-koperasi">-</span></div>
+                <div class="text-slate-500 text-[11px]">NIK: <span class="font-mono font-bold text-slate-700" id="resolusi-nik">-</span></div>
+            </div>
+        </div>
+
+        <form id="form-resolusi-konflik" method="POST" action="" class="space-y-4">
+            @csrf
+
+            <!-- Pilihan Putusan Sah (3 Opsi Regulasi K4) -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Putusan Hukum Resmi:</label>
+                <div class="space-y-2">
+                    <label class="flex items-start p-3 bg-emerald-50/60 border border-emerald-300 rounded-xl cursor-pointer hover:bg-emerald-50 transition">
+                        <input type="radio" name="keputusan" value="HAK_MILIK_KOPERASI" checked class="mt-0.5 text-emerald-600 focus:ring-emerald-500">
+                        <div class="ml-2.5">
+                            <div class="text-xs font-bold text-emerald-950">1. Hak NIB Diberikan ke Pemilik Usaha Dinas Koperasi</div>
+                            <div class="text-[11px] text-emerald-800 leading-tight">NIB OSS sah dilekatkan ke profil UMKM Dinas Koperasi; status data OSS menjadi sinkron (LINKED).</div>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start p-3 bg-blue-50/60 border border-blue-300 rounded-xl cursor-pointer hover:bg-blue-50 transition">
+                        <input type="radio" name="keputusan" value="HAK_MILIK_OSS" class="mt-0.5 text-blue-600 focus:ring-blue-500">
+                        <div class="ml-2.5">
+                            <div class="text-xs font-bold text-blue-950">2. Hak NIB Diberikan ke Pemilik Data OSS DPMPTSP</div>
+                            <div class="text-[11px] text-blue-800 leading-tight">NIB pada data UMKM lama dilepaskan (menjadi Belum Berizin), data OSS dicatat sebagai unit usaha mandiri (SEPARATED).</div>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start p-3 bg-purple-50/60 border border-purple-300 rounded-xl cursor-pointer hover:bg-purple-50 transition">
+                        <input type="radio" name="keputusan" value="MULTI_USAHA_CABANG" class="mt-0.5 text-purple-600 focus:ring-purple-500">
+                        <div class="ml-2.5">
+                            <div class="text-xs font-bold text-purple-950">3. Penetapan Multi-Kegiatan Usaha / Cabang Resmi dalam 1 NIB Induk</div>
+                            <div class="text-[11px] text-purple-800 leading-tight">Kedua unit usaha diakui sah sebagai cabang dari 1 nomor izin induk yang sama.</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Isian Berita Acara & Tim Pemeriksa -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Nomor Berita Acara (BA):</label>
+                    <input type="text" name="nomor_ba" required value="BA.518/044/DKUKMTK-DPMPTSP/{{ date('Y') }}"
+                           class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 text-xs font-mono">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Tanggal Berita Acara:</label>
+                    <input type="date" name="tanggal_ba" required value="{{ date('Y-m-d') }}"
+                           class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 text-xs">
+                </div>
+            </div>
+
+            <div class="text-xs">
+                <label class="block font-bold text-slate-700 mb-1">Tim Pemeriksa Terpadu (Lintas OPD):</label>
+                <input type="text" name="tim_pemeriksa" required value="Dinas Koperasi & UKM Sinjai, DPMPTSP Sinjai, Tim Surveyor Lapangan"
+                       class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 text-xs">
+            </div>
+
+            <div class="text-xs">
+                <label class="block font-bold text-slate-700 mb-1">Catatan Hasil Telaah Fisik / Bukti Dokumen KTP:</label>
+                <textarea name="catatan_hasil" rows="2" required placeholder="Contoh: Telah dilakukan verifikasi fisik KTP asli dan dokumen pendirian usaha di kantor desa. Subjek hukum telah diklarifikasi."
+                          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 text-xs"></textarea>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
+                <button type="button" onclick="closeModalResolusiKonflik()"
+                        class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-xs transition">
+                    Batalkan
+                </button>
+                <button type="submit" 
+                        onclick="return confirm('Apakah Anda yakin ingin menetapkan putusan resmi atas sengketa NIB ini? Tindakan akan dicatat secara permanen di Audit Trail sistem.')"
+                        class="px-4 py-2 bg-rose-700 hover:bg-rose-800 text-white font-bold rounded-lg text-xs shadow-md transition flex items-center space-x-1.5">
+                    <span>⚖️</span>
+                    <span>Tetapkan Putusan Sah K4</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     function submitLembarKerja(format) {
         const kec = document.getElementById('modal-kecamatan').value;
@@ -499,6 +622,21 @@
             window.open(url, '_blank');
             document.getElementById('modal-lembar-kerja').classList.add('hidden');
         }
+    }
+
+    function openModalResolusiKonflik(data) {
+        document.getElementById('form-resolusi-konflik').action = `/rekonsiliasi/${data.id}/selesaikan-konflik`;
+        document.getElementById('resolusi-nama-oss').textContent = data.nama_oss || '-';
+        document.getElementById('resolusi-usaha-oss').textContent = data.usaha_oss || '-';
+        document.getElementById('resolusi-nama-koperasi').textContent = data.nama_koperasi || '-';
+        document.getElementById('resolusi-usaha-koperasi').textContent = data.usaha_koperasi || '-';
+        document.getElementById('resolusi-kecamatan').textContent = data.kecamatan || '-';
+        document.getElementById('resolusi-nik').textContent = data.nik || '-';
+        document.getElementById('modal-resolusi-konflik').classList.remove('hidden');
+    }
+
+    function closeModalResolusiKonflik() {
+        document.getElementById('modal-resolusi-konflik').classList.add('hidden');
     }
 </script>
 @endsection

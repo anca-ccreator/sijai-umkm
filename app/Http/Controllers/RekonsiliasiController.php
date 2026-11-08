@@ -225,6 +225,90 @@ class RekonsiliasiController extends Controller
     }
 
     /**
+     * Resolusi Sengketa & Konflik Identitas NIB (DT-009 Jalur K4)
+     * Memberikan kepastian hukum atas perbedaan data NIB OSS DPMPTSP vs Data UKM Dinas Koperasi
+     */
+    public function selesaikanKonflik(Request $request, $id)
+    {
+        $request->validate([
+            'keputusan' => 'required|in:HAK_MILIK_KOPERASI,HAK_MILIK_OSS,MULTI_USAHA_CABANG',
+            'nomor_ba' => 'required|string|max:150',
+            'tanggal_ba' => 'required|date',
+            'tim_pemeriksa' => 'required|string|max:255',
+            'catatan_hasil' => 'required|string|max:1000',
+        ]);
+
+        $nibRecord = NibRecord::with('matchedUmkm.owner')->findOrFail($id);
+
+        if ($nibRecord->reconciliation_status !== 'CONFLICTING_INFO') {
+            return back()->with('info', "Rekaman NIB {$nibRecord->nib} sudah tidak lagi berstatus konflik.");
+        }
+
+        $keputusan = $request->input('keputusan');
+        $nomorBa = $request->input('nomor_ba');
+        $tanggalBa = $request->input('tanggal_ba');
+        $timPemeriksa = $request->input('tim_pemeriksa');
+        $catatanHasil = $request->input('catatan_hasil');
+        $petugas = auth()->user()?->name ?? 'Verifikator Terpadu';
+        $dinas = auth()->user()?->dinas ?? 'Dinas Koperasi & UKM';
+
+        $umkm = $nibRecord->matchedUmkm;
+        $oldNibStatus = $nibRecord->reconciliation_status;
+
+        $keputusanLabel = '';
+        if ($keputusan === 'HAK_MILIK_KOPERASI') {
+            $keputusanLabel = 'Hak NIB Diberikan ke Pemilik Usaha Dinas Koperasi';
+            if ($umkm) {
+                $umkm->nib = $nibRecord->nib;
+                $umkm->jenis_izin = 'NIB_OSS';
+                $umkm->save();
+            }
+            $nibRecord->reconciliation_status = 'LINKED';
+        } elseif ($keputusan === 'HAK_MILIK_OSS') {
+            $keputusanLabel = 'Hak NIB Diberikan ke Pemilik Data OSS DPMPTSP';
+            if ($umkm && $umkm->nib === $nibRecord->nib) {
+                $umkm->nib = null;
+                $umkm->jenis_izin = 'BELUM_BERIZIN';
+                $umkm->save();
+            }
+            $nibRecord->reconciliation_status = 'SEPARATED';
+        } elseif ($keputusan === 'MULTI_USAHA_CABANG') {
+            $keputusanLabel = 'Penetapan Multi-Kegiatan Usaha / Cabang Resmi dalam 1 NIB Induk';
+            if ($umkm) {
+                $umkm->nib = $nibRecord->nib;
+                $umkm->jenis_izin = 'NIB_OSS';
+                $umkm->save();
+            }
+            $nibRecord->reconciliation_status = 'LINKED';
+        }
+
+        $baSummary = "Putusan K4: [{$keputusanLabel}]. BA No: {$nomorBa} tgl {$tanggalBa}. Tim Pemeriksa: {$timPemeriksa}. Telaah: {$catatanHasil}. Diputuskan oleh {$petugas} ({$dinas}).";
+
+        $nibRecord->reconciled_by = auth()->id();
+        $nibRecord->reconciled_at = now();
+        $nibRecord->match_notes = $baSummary;
+        $nibRecord->save();
+
+        // Audit Trail Atomik (KB-12 & DT-009 Jalur K4)
+        ActivityLog::record(
+            'RESOLUSI_KONFLIK_K4',
+            "Penyelesaian Sengketa NIB {$nibRecord->nib}: {$keputusanLabel} (BA: {$nomorBa}). Pelaku OSS: {$nibRecord->nama_lengkap} vs Koperasi: " . ($umkm?->owner?->nama_lengkap ?? '-'),
+            $umkm,
+            ['reconciliation_status' => $oldNibStatus],
+            [
+                'reconciliation_status' => $nibRecord->reconciliation_status,
+                'keputusan' => $keputusan,
+                'nomor_ba' => $nomorBa,
+                'tanggal_ba' => $tanggalBa,
+                'tim_pemeriksa' => $timPemeriksa,
+                'catatan_hasil' => $catatanHasil,
+            ]
+        );
+
+        return back()->with('success', "Sengketa NIB {$nibRecord->nib} berhasil diselesaikan secara sah dan berjejak! Putusan: {$keputusanLabel} (BA: {$nomorBa}).");
+    }
+
+    /**
      * Unduh Lembar Kerja Lapangan untuk Data Konflik / Penyelidikan Fisik (CSV)
      */
     public function eksporKonflik(Request $request): StreamedResponse

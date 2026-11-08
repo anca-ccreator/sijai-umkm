@@ -18,7 +18,7 @@
 <div class="space-y-6">
 
     <!-- SAMAKI Dashboard Hero Banner (Diadopsi dari Portal SAMAKI Sinjai) -->
-    <div class="samaki-dashboard-hero p-6 sm:p-8 text-white relative shadow-xl">
+    <div style="background: linear-gradient(135deg, #071525 0%, #0c233c 50%, #071525 100%) !important; color: #ffffff !important;" class="samaki-dashboard-hero p-6 sm:p-8 text-white relative shadow-xl">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <!-- Sisi Kiri: Identitas Resmi, Judul & Tombol Cepat -->
             <div class="space-y-3 max-w-3xl">
