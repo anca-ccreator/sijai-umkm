@@ -190,6 +190,7 @@ class UmkmController extends Controller
         }
 
         return response()->json([
+            'has_nik_match' => !empty($owner),
             'nib_check' => $nibCheck,
             'nik_check' => $nikCheck,
             'has_name_match' => !empty($similarBusinesses),

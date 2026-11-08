@@ -126,7 +126,12 @@ class VerifikasiController extends Controller
 
         // ASAS INTEGRITAS & PEMISAHAN KEWENANGAN (KB-05 / DT-003 C2):
         // Petugas yang menginput / mencatat dilarang mengesahkan profil usahanya sendiri
-        if ($umkm->created_by && $umkm->created_by === auth()->id() && !auth()->user()?->isAdmin()) {
+        $pencatatLog = ActivityLog::where('umkm_id', $umkm->id)
+            ->where('action', 'TAMBAH_UMKM')
+            ->first();
+        $pencatatId = $pencatatLog?->user_id;
+
+        if ($pencatatId && $pencatatId === auth()->id() && !auth()->user()?->isAdmin()) {
             return back()->with('error', 'Pelanggaran Integritas Sistem: Sesuai aturan KB-05 / DT-003 C2, petugas pencatat DILARANG mengesahkan berkas buatannya sendiri. Berkas wajib diverifikasi oleh verifikator lain.');
         }
 
@@ -176,7 +181,13 @@ class VerifikasiController extends Controller
 
         // Hindari mengesahkan data yang dibuat oleh petugas saat ini (kecuali admin)
         if (!auth()->user()?->isAdmin()) {
-            $query->where('created_by', '!=', auth()->id());
+            $myRegisteredIds = ActivityLog::where('action', 'TAMBAH_UMKM')
+                ->where('user_id', auth()->id())
+                ->pluck('umkm_id')
+                ->filter();
+            if ($myRegisteredIds->isNotEmpty()) {
+                $query->whereNotIn('id', $myRegisteredIds);
+            }
         }
 
         $targets = $query->take($limit)->get();

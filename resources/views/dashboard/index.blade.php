@@ -26,6 +26,8 @@
                     <span>🏛️ PEMERINTAH KABUPATEN SINJAI</span>
                     <span>•</span>
                     <span>DINAS KOPERASI, UKM DAN TENAGA KERJA</span>
+                    <span>•</span>
+                    <span>Ringkasan Eksekutif Data UMKM Sinjai</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
                     @if($activeTab === 'tenaga-kerja')
