@@ -37,7 +37,8 @@ class InitDatabaseCommand extends Command
             $this->info("✓ Basis data SIJAI UMKM sudah terisi ($totalUmkm UMKM). Memeriksa migrasi baru...");
             $this->call('migrate', ['--force' => true]);
             if (Schema::hasTable('food_products') && DB::table('food_products')->count() === 0) {
-                $this->call('db:seed', ['--class' => 'FoodProductSeeder', '--force' => true]);
+                require_once database_path('seeders/FoodProductSeeder.php');
+                (new \Database\Seeders\FoodProductSeeder())->run();
             }
             return Command::SUCCESS;
         }
@@ -113,7 +114,8 @@ class InitDatabaseCommand extends Command
 
             $this->call('migrate', ['--force' => true]);
             if (Schema::hasTable('food_products') && DB::table('food_products')->count() === 0) {
-                $this->call('db:seed', ['--class' => 'FoodProductSeeder', '--force' => true]);
+                require_once database_path('seeders/FoodProductSeeder.php');
+                (new \Database\Seeders\FoodProductSeeder())->run();
             }
 
             return Command::SUCCESS;

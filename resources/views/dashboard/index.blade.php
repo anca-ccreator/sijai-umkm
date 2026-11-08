@@ -165,6 +165,20 @@
                class="px-3.5 py-2 rounded-xl transition flex items-center space-x-1.5 {{ $activeTab === 'ringkasan' ? 'bg-emerald-700 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100' }}">
                 <span>📊 Ringkasan Eksekutif</span>
             </a>
+            <a href="{{ route('dashboard', ['tab' => 'pangan']) }}" 
+               class="px-3.5 py-2 rounded-xl transition flex items-center space-x-1.5 {{ $activeTab === 'pangan' ? 'bg-emerald-800 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100' }}">
+                <span>🍲 Industri Pangan (KB-09)</span>
+                @if($totalFoodProducts > 0)
+                <span class="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-500 text-white font-extrabold">{{ $totalFoodProducts }}</span>
+                @endif
+            </a>
+            <a href="{{ route('dashboard', ['tab' => 'verifikasi']) }}" 
+               class="px-3.5 py-2 rounded-xl transition flex items-center space-x-1.5 {{ $activeTab === 'verifikasi' ? 'bg-blue-700 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100' }}">
+                <span>⚖️ Verifikasi OPD & Sengketa</span>
+                @if($antreanVerifikasiCount > 0)
+                <span class="px-1.5 py-0.5 rounded-full text-[10px] bg-blue-500 text-white font-extrabold">{{ $antreanVerifikasiCount }}</span>
+                @endif
+            </a>
             <a href="{{ route('dashboard', ['tab' => 'tenaga-kerja']) }}" 
                class="px-3.5 py-2 rounded-xl transition flex items-center space-x-1.5 {{ $activeTab === 'tenaga-kerja' ? 'bg-indigo-700 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100' }}">
                 <span>👥 Tenaga Kerja</span>
