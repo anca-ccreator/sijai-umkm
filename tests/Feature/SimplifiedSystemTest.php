@@ -43,6 +43,9 @@ class SimplifiedSystemTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Ringkasan Eksekutif Data UMKM Sinjai');
         $response->assertSee('Unduh Laporan Excel (CSV)');
+        $response->assertSee('Pusat Kurasi Produk Industri Pangan', false);
+        $response->assertSee('Meja Verifikasi', false);
+        $response->assertSee('Profil Industri Pangan', false);
     }
 
     public function test_excel_export_streams_proper_csv(): void

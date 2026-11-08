@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/verifikasi', [\App\Http\Controllers\PanganController::class, 'verifikasi'])->name('verifikasi');
         Route::get('/ekspor', [\App\Http\Controllers\PanganController::class, 'ekspor'])->name('ekspor');
         Route::get('/cetak-kurasi', [\App\Http\Controllers\PanganController::class, 'cetakKurasi'])->name('cetakKurasi');
+        Route::get('/cetak', [\App\Http\Controllers\PanganController::class, 'cetakKurasi'])->name('cetak');
     });
 });
 

@@ -12,7 +12,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $activeTab = $request->query('tab', 'ringkasan');
-        $validTabs = ['ringkasan', 'tenaga-kerja', 'ekonomi', 'legalitas', 'kecamatan', 'semua'];
+        $validTabs = ['ringkasan', 'pangan', 'verifikasi', 'tenaga-kerja', 'ekonomi', 'legalitas', 'kecamatan', 'semua'];
         if (!in_array($activeTab, $validTabs, true)) {
             $activeTab = 'ringkasan';
         }
@@ -129,6 +129,29 @@ class DashboardController extends Controller
         $era2016_2020 = Umkm::whereBetween('tahun_berdiri', [2016, 2020])->count();
         $era2021_2026 = Umkm::whereBetween('tahun_berdiri', [2021, $tahunSekarang])->count();
 
+        // Opsi B: Antrean Verifikasi & Sengketa NIB K4
+        $antreanVerifikasiCount = Umkm::whereIn('status', ['DRAFT', 'PERBAIKAN'])->count();
+        $totalKonflikNib = \Illuminate\Support\Facades\Schema::hasTable('nib_records')
+            ? \App\Models\NibRecord::where('reconciliation_status', 'CONFLICTING_INFO')->count()
+            : 44;
+
+        // Opsi A: Profil Industri Pengolahan Pangan (KB-09 Model B)
+        $totalFoodProducts = \Illuminate\Support\Facades\Schema::hasTable('food_products')
+            ? \App\Models\FoodProduct::count()
+            : 0;
+        $totalFoodHalal = \Illuminate\Support\Facades\Schema::hasTable('food_products')
+            ? \App\Models\FoodProduct::whereNotNull('legalitas_halal')->where('legalitas_halal', '!=', '')->count()
+            : 0;
+        $totalFoodPirt = \Illuminate\Support\Facades\Schema::hasTable('food_products')
+            ? \App\Models\FoodProduct::whereNotNull('legalitas_pirt')->where('legalitas_pirt', '!=', '')->count()
+            : 0;
+        $totalFoodHigiene = \Illuminate\Support\Facades\Schema::hasTable('food_products')
+            ? \App\Models\FoodProduct::where('status_higiene', 'LAYAK_HIGIENE')->count()
+            : 0;
+        $foodProductsSample = \Illuminate\Support\Facades\Schema::hasTable('food_products')
+            ? \App\Models\FoodProduct::with('umkm')->take(6)->get()
+            : collect();
+
         return view('dashboard.index', compact(
             'activeTab',
             'totalUmkm', 'totalResmi', 'totalDraft', 'totalPerbaikan', 'totalTutup',
@@ -143,7 +166,9 @@ class DashboardController extends Controller
             'totalBerizin', 'totalBelumBerizin', 'formalitasRate',
             'totalNibOss', 'totalSkuDesa', 'totalIumk', 'totalLainnya', 'sebaranIzin',
             'totalDenganTahun', 'rataUsiaUsaha', 'usahaMapan', 'usahaBerkembang', 'usahaRintisan',
-            'eraPra2016', 'era2016_2020', 'era2021_2026'
+            'eraPra2016', 'era2016_2020', 'era2021_2026',
+            'antreanVerifikasiCount', 'totalKonflikNib',
+            'totalFoodProducts', 'totalFoodHalal', 'totalFoodPirt', 'totalFoodHigiene', 'foodProductsSample'
         ));
     }
 

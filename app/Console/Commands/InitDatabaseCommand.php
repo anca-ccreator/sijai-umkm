@@ -34,7 +34,11 @@ class InitDatabaseCommand extends Command
 
         if ($isPopulated && !$force) {
             $totalUmkm = DB::table('umkm')->count();
-            $this->info("✓ Basis data SIJAI UMKM sudah terisi ($totalUmkm UMKM). Inisialisasi otomatis dilewati.");
+            $this->info("✓ Basis data SIJAI UMKM sudah terisi ($totalUmkm UMKM). Memeriksa migrasi baru...");
+            $this->call('migrate', ['--force' => true]);
+            if (Schema::hasTable('food_products') && DB::table('food_products')->count() === 0) {
+                $this->call('db:seed', ['--class' => 'FoodProductSeeder', '--force' => true]);
+            }
             return Command::SUCCESS;
         }
 
@@ -105,6 +109,11 @@ class InitDatabaseCommand extends Command
                 $this->info("  - Pemilik Usaha : " . number_format($totalOwners, 0, ',', '.') . " orang");
                 $this->info("  - Rekod NIB OSS : " . number_format($totalNib, 0, ',', '.') . " rekod");
                 $this->info("  - Akun Pengguna : " . number_format($totalUsers, 0, ',', '.') . " akun");
+            }
+
+            $this->call('migrate', ['--force' => true]);
+            if (Schema::hasTable('food_products') && DB::table('food_products')->count() === 0) {
+                $this->call('db:seed', ['--class' => 'FoodProductSeeder', '--force' => true]);
             }
 
             return Command::SUCCESS;
